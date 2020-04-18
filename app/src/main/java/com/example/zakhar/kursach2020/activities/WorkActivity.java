@@ -40,25 +40,31 @@ public class WorkActivity extends AppCompatActivity {
         bottom = 0;
         bird = new Bird(koords, imageView);
         int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
-
-        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            processer = new Processer(koords);
-        } else {
+        int permissionStatus2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        } else {
+            if (permissionStatus2 != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+            if (permissionStatus == PackageManager.PERMISSION_GRANTED && permissionStatus2 == PackageManager.PERMISSION_GRANTED) {
+
+                processer = new Processer(koords);
+            }
+
         }
     }
-
 
     public void onStartClick(View view) {
 
 
-        bird.start();
         processer.start();
     }
 
     public void onSopClick(View view) {
         processer.stop();
-        bird.stop();
+        bird.start();
+        //    bird.stop();
     }
 
     public class Bird implements Runnable {
@@ -90,10 +96,12 @@ public class WorkActivity extends AppCompatActivity {
         @Override
         public void run() {
             while (thread != null) {
-                //System.err.println("current  is:" + koords.peek());
-                try {
-                    bird.setY(koords.poll().intValue());
-                } catch (Exception e) {
+                if (!koords.isEmpty()) {
+                    System.err.println("current  is:" + koords.peek());
+                    try {
+                        bird.setY(koords.poll().intValue());
+                    } catch (Exception e) {
+                    }
                 }
             }
         }

@@ -25,17 +25,33 @@ public class WaveFile {
     //private AudioInputStream ais = null;
    // private AudioFormat af = null;
 
-    public WaveFile(int sampleSize, int sampleRate, byte[] data) {
+   /* public WaveFile(int sampleSize, int sampleRate, byte[] data) {
         this.sampleSize = sampleSize;
         this.sampleRate = sampleRate;
         this.data = data;
-    }
+    }*/
+   WaveFile(int sampleSize, float sampleRate, int channels, int[] samples) throws Exception {
+
+       if(sampleSize < INT_SIZE){
+           throw new Exception("sample size < int size");
+       }
+
+       this.sampleSize = sampleSize;
+      // this.af = new AudioFormat(sampleRate, sampleSize*8, channels, true, false);
+       this.data = new byte[samples.length*sampleSize];
+
+       // заполнение данных
+       for(int i=0; i < samples.length; i++){
+           setSampleInt(i, samples[i]);
+       }
+
+       }
 
     /**
      * Создает объект из InputStream
      */
 
-   /*
+/*
     WaveFile(AudioInputStream ais) throws UnsupportedAudioFileException, IOException {
 
 
@@ -57,8 +73,8 @@ public class WaveFile {
         data = new byte[(int) dataLength];
         ais.read(data);
     }
-*/
 
+*/
     /**
      * Создает объект из указанного wave-файла
      *
