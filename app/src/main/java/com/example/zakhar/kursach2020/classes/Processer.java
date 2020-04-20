@@ -19,36 +19,32 @@ public class Processer {
     ConcurrentLinkedQueue<byte[]> outFromMicro = new ConcurrentLinkedQueue<>();//выходной сигнал с микрофона
     ConcurrentLinkedQueue<double[]> fftValues = new ConcurrentLinkedQueue<>();//значения после преобразования фурье
  //   ConcurrentLinkedQueue<AudioInputStream> ais = new ConcurrentLinkedQueue<>();//аудиопотоки полученые из сигнала микрофона
-    ConcurrentLinkedQueue<long[]> sampleInt = new ConcurrentLinkedQueue<>();//значения семплов
+    ConcurrentLinkedQueue<short[]> sampleInt = new ConcurrentLinkedQueue<>();//значения семплов
     ConcurrentLinkedQueue<Double> freqs = new ConcurrentLinkedQueue<>();//частоты
     ConcurrentLinkedQueue<Double> equalizedFreqs = new ConcurrentLinkedQueue<>();//сглаженые частоты
 
     private Analizer analizer;
     private FFTProcesser fftProcesser;
-    private WaveFileBuilder waveFileBuilder;
     private ConcurrentLinkedQueue<Double> koords;
-//    private MicrophoneRecoderV3 microphoneRecoderV3;
-    private AudioGetter audioGetter;
+    private SampleMaker sampleMaker;
     public Processer(ConcurrentLinkedQueue<Double> koords, File fos) {
 
         this.koords=koords;
         freqs=koords;
         int sampleRate = 44100;//format.getSampleRate();
         int sampleSize =32/8;
-        audioGetter=new AudioGetter(outFromMicro,fos);
-       // microphoneRecoderV3=new MicrophoneRecoderV3(outFromMicro,fos);
+        sampleMaker=new SampleMaker(sampleInt,fos);
         analizer = new Analizer(fftValues, freqs);
-        waveFileBuilder = new WaveFileBuilder(outFromMicro, sampleSize, sampleRate, sampleInt);
         fftProcesser = new FFTProcesser(sampleInt, fftValues);
-        Equalizer equalizer = new Equalizer(freqs, equalizedFreqs);
     }
 
     public void start() {
         try {
-            audioGetter.start();
+            sampleMaker.start();
+           // audioGetter.start();
             analizer.start();
             fftProcesser.start();
-            waveFileBuilder.start();
+          //  waveFileBuilder.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,9 +52,7 @@ public class Processer {
 
     public void stop(){
         try {
-           audioGetter.stop();
             fftProcesser.stop();
-            waveFileBuilder.stop();
             analizer.stop();
         }catch (Exception e){
             e.printStackTrace();

@@ -4,11 +4,11 @@ package com.example.zakhar.kursach2020.classes;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FFTProcesser implements Runnable {
-    ConcurrentLinkedQueue<long[]> samples;
+    ConcurrentLinkedQueue<short[]> samples;
     Thread thread;
     ConcurrentLinkedQueue<double[]> fftvalues;
 
-    public FFTProcesser(ConcurrentLinkedQueue<long[]> samples, ConcurrentLinkedQueue<double[]> fftvalues) {
+    public FFTProcesser(ConcurrentLinkedQueue<short[]> samples, ConcurrentLinkedQueue<double[]> fftvalues) {
         this.samples = samples;
         this.fftvalues = fftvalues;
     }
@@ -35,7 +35,7 @@ public class FFTProcesser implements Runnable {
             while (!samples.isEmpty()) {
 
                 try {
-                    long[] samplesArr = samples.poll();
+                    short[] samplesArr = samples.poll();
                     Complex[] samplesComplex = new Complex[1024];
                     for (int i = 0; i < 1024; i++) {
                         samplesComplex[i] = new Complex((double) samplesArr[i], 0.0);

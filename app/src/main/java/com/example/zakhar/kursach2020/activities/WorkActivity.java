@@ -4,29 +4,21 @@ import com.example.zakhar.kursach2020.*;
 import com.example.zakhar.kursach2020.classes.Processer;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
 import android.media.MediaRecorder;
+import android.os.Environment;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.ConsoleMessage;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 
-import java.io.Console;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class WorkActivity extends AppCompatActivity {
     ConcurrentLinkedQueue<Double> koords = new ConcurrentLinkedQueue<>();
@@ -43,7 +35,17 @@ public class WorkActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
+        audioFile = new File(Environment.getExternalStorageDirectory(),
+                "audio_test4.3gp");
+        try {
+            if (audioFile.exists()) {
+                audioFile.delete();
+            }
+            audioFile.createNewFile();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         llMain = (ConstraintLayout) findViewById(R.id.LLMain);
         imageView = (ImageView) findViewById(R.id.imageView);
         high = llMain.getMaxHeight();
@@ -67,17 +69,32 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     public void onStartClick(View view) {
+    if(mediaRecorder==null) {
+       // microphoneRecoderV4.start();
         mediaRecorder = new MediaRecorder();
         resetRecorder();
         mediaRecorder.start();
-        processer.start();
+    }
 
     }
 
     public void onSopClick(View view) {
-        mediaRecorder.stop();
-        processer.stop();
-        bird.start();
+        if(mediaRecorder!=null) {
+            mediaRecorder.stop();
+
+//        try {
+//            Thread.sleep(1000);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+            if (audioFile.canRead()) {
+                processer.start();
+            } else {
+                System.err.println("problem with file " + audioFile.getAbsolutePath());
+            }
+            //processer.stop();
+            bird.start();
+        }
         //    bird.stop();
     }
 
@@ -123,9 +140,9 @@ public class WorkActivity extends AppCompatActivity {
 
     private void resetRecorder() {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.WEBM);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setAudioEncodingBitRate(32);
+        mediaRecorder.setAudioEncodingBitRate(16);
         mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(audioFile.getAbsolutePath());
 
