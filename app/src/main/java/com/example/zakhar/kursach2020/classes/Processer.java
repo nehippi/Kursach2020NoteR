@@ -2,6 +2,8 @@ package com.example.zakhar.kursach2020.classes;
 
 import android.media.AudioFormat;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.media.AudioFormat;
@@ -24,16 +26,17 @@ public class Processer {
     private Analizer analizer;
     private FFTProcesser fftProcesser;
     private WaveFileBuilder waveFileBuilder;
-   // private MicrophoneRecoder microphoneRecoder;
     private ConcurrentLinkedQueue<Double> koords;
-    private MicrophoneRecoderV3 microphoneRecoderV3;
-    public Processer(ConcurrentLinkedQueue<Double> koords) {
+//    private MicrophoneRecoderV3 microphoneRecoderV3;
+    private AudioGetter audioGetter;
+    public Processer(ConcurrentLinkedQueue<Double> koords, File fos) {
 
         this.koords=koords;
         freqs=koords;
         int sampleRate = 44100;//format.getSampleRate();
         int sampleSize =32/8;
-        microphoneRecoderV3=new MicrophoneRecoderV3(outFromMicro);
+        audioGetter=new AudioGetter(outFromMicro,fos);
+       // microphoneRecoderV3=new MicrophoneRecoderV3(outFromMicro,fos);
         analizer = new Analizer(fftValues, freqs);
         waveFileBuilder = new WaveFileBuilder(outFromMicro, sampleSize, sampleRate, sampleInt);
         fftProcesser = new FFTProcesser(sampleInt, fftValues);
@@ -42,10 +45,10 @@ public class Processer {
 
     public void start() {
         try {
-
-            microphoneRecoderV3.start(true);
-
-
+            audioGetter.start();
+            analizer.start();
+            fftProcesser.start();
+            waveFileBuilder.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,14 +56,10 @@ public class Processer {
 
     public void stop(){
         try {
-            microphoneRecoderV3.stop();
-            microphoneRecoderV3.start(false);
-            analizer.start();
-            fftProcesser.start();
-            waveFileBuilder.start();
-            //fftProcesser.stop();
-            //waveFileBuilder.stop();
-            //analizer.stop();
+           audioGetter.stop();
+            fftProcesser.stop();
+            waveFileBuilder.stop();
+            analizer.stop();
         }catch (Exception e){
             e.printStackTrace();
         }

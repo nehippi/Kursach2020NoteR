@@ -1,34 +1,45 @@
 package com.example.zakhar.kursach2020.classes;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaRecorder;
 import android.os.ParcelFileDescriptor;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class MicrophoneRecoderV3 implements Runnable {
-    MediaRecorder mediaRecorder;
-    Thread thread;
-    ConcurrentLinkedQueue<byte[]> dataFromMicro;
-    ByteArrayOutputStream byteArrayOutputStream;
-    ParcelFileDescriptor[] descriptors;
-    ParcelFileDescriptor parcelRead;
-    ParcelFileDescriptor parcelWrite;
-    int counter = 0;
-    boolean isRecording;
-    InputStream inputStream;
+import static android.support.v4.content.ContextCompat.getSystemService;
 
+public class MicrophoneRecoderV3 implements Runnable {
+    private MediaRecorder mediaRecorder;
+    private Thread thread;
+    private ConcurrentLinkedQueue<byte[]> dataFromMicro;
+    private ByteArrayOutputStream byteArrayOutputStream;
+    private ParcelFileDescriptor[] descriptors;
+    private ParcelFileDescriptor parcelRead;
+    private ParcelFileDescriptor parcelWrite;
+    private int counter = 0;
+    private boolean isRecording;
+    private InputStream inputStream;
+    File outputFile;
+    String fileName="tmpRecord";
 
     public MicrophoneRecoderV3(ConcurrentLinkedQueue<byte[]> dataFromMicro) {
+       System.out.println("MRV3 is created");
         try {
-            descriptors = ParcelFileDescriptor.createPipe();
-            parcelRead = new ParcelFileDescriptor(descriptors[0]);
-            parcelWrite = new ParcelFileDescriptor(descriptors[1]);
+          //  descriptors = ParcelFileDescriptor.createPipe();
+           // parcelRead = new ParcelFileDescriptor(descriptors[0]);
+            //parcelWrite = new ParcelFileDescriptor(descriptors[1]);
 
+            File outFile = new File(fileName);
+            if (outFile.exists()) {
+                outFile.delete();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,17 +62,17 @@ public class MicrophoneRecoderV3 implements Runnable {
         this.thread.setName("Microphone");
 
         thread.start();
-        System.err.println("micro started");
+        System.out.println("micro started");
     }
 
     public void stop() {
-       try {
-           mediaRecorder.stop();
-       }catch (Exception e){
+        try {
+            mediaRecorder.stop();
+        } catch (Exception e) {
 
-       }
+        }
         mediaRecorder.reset();
-       //mediaRecorder.release();
+        //mediaRecorder.release();
         this.thread = null;
         System.err.println("micro stopped");
 
@@ -77,13 +88,14 @@ public class MicrophoneRecoderV3 implements Runnable {
             //mediaRecorder.setAudioEncodingBitRate(32);
             //mediaRecorder.setAudioSamplingRate(44100);
 
-            mediaRecorder.setOutputFile(parcelWrite.getFileDescriptor());
+            mediaRecorder.setOutputFile(descriptors[0].getFileDescriptor());
             try {
                 mediaRecorder.prepare();
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("prepare failed");
-            }//init
+            }//init\
+
             mediaRecorder.start();
             byte[] data = new byte[44100];
             int read;//too init
