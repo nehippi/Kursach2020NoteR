@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class WorkActivity extends AppCompatActivity {
@@ -26,10 +27,10 @@ public class WorkActivity extends AppCompatActivity {
     ConstraintLayout llMain;
     ImageView imageView;
     int high;
-    Bird bird;
     int bottom;
     private MediaRecorder mediaRecorder;
     private File audioFile;
+    private Double etalon = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,6 @@ public class WorkActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
         high = llMain.getMaxHeight();
         bottom = 0;
-        bird = new Bird(koords, imageView);
         int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
         int permissionStatus2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
@@ -69,74 +69,46 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     public void onStartClick(View view) {
-    if(mediaRecorder==null) {
-       // microphoneRecoderV4.start();
-        mediaRecorder = new MediaRecorder();
-        resetRecorder();
-        mediaRecorder.start();
-    }
+        if (mediaRecorder == null) {
+            if (etalon == null) {
+                mediaRecorder.setMaxDuration(2500);
+                onSopClick(view);
+                getEtalon(koords);
+            }
+            mediaRecorder = new MediaRecorder();
+            resetRecorder();
+            mediaRecorder.start();
+        }
 
     }
 
     public void onSopClick(View view) {
-        if(mediaRecorder!=null) {
+        if (mediaRecorder != null) {
             mediaRecorder.stop();
 
-//        try {
-//            Thread.sleep(1000);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//        }
             if (audioFile.canRead()) {
                 processer.start();
             } else {
                 System.err.println("problem with file " + audioFile.getAbsolutePath());
             }
-            //processer.stop();
-            bird.start();
-        }
-        //    bird.stop();
-    }
-
-    public class Bird implements Runnable {
-        ConcurrentLinkedQueue<Double> koords;
-        ImageView bird;
-        Thread thread;
-
-        public Bird(ConcurrentLinkedQueue<Double> koords, ImageView bird) {
-            this.koords = koords;
-            this.bird = bird;
-            this.thread = new Thread(this);
-        }
-
-        public void start() {
-            try {
-                this.thread.start();
-                System.out.println("main started");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void stop() {
-            this.thread = null;
-        }
-
-
-        @Override
-        public void run() {
-            while (thread != null) {
-                if (!koords.isEmpty()) {
-                    System.err.println("current  is:" + koords.peek());
-                    try {
-                        bird.setY(koords.poll().intValue());
-                    } catch (Exception e) {
-                    }
-                }
-            }
         }
     }
+
+    private double getEtalon(ConcurrentLinkedQueue<Double> queue) {
+        int j = 0;
+        double[] arr = new double[queue.size()];
+        while (!queue.isEmpty()) {
+            arr[j] = queue.poll();
+            j++;
+        }
+
+        double sum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+        }
+        return sum / arr.length;
+    }
+
 
     private void resetRecorder() {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
