@@ -12,6 +12,10 @@ public class SampleMaker implements Runnable {
     Thread thread;
     File file;
 
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     public SampleMaker(ConcurrentLinkedQueue out, File file) {
         this.out = out;
         this.file = file;
@@ -20,7 +24,8 @@ public class SampleMaker implements Runnable {
     private short[] returnSamples() {
         try {
             SoundFile soundFile = SoundFile.create(file.getAbsolutePath());
-            soundFile.getNumSamples();
+            int sizeBytes= soundFile.getFileSizeBytes();
+
             ShortBuffer samples = soundFile.getSamples();
             int size=samples.capacity();
             short[] out=new short[size];
@@ -57,5 +62,7 @@ public class SampleMaker implements Runnable {
             out.add(Arrays.copyOfRange(samples,i*n,(i+1)*n));
 
         }
+        out.add(new short[666]);
+
     }
 }

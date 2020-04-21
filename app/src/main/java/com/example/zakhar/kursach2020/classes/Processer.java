@@ -4,6 +4,7 @@ import android.media.AudioFormat;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import android.media.AudioFormat;
@@ -12,30 +13,38 @@ public class Processer {
     public ConcurrentLinkedQueue<double[]> queueOfGraphs = new ConcurrentLinkedQueue<>();
 
 
-    //AudioFormat.Builder formatBuilder; //= new AudioFormat.Builder();
-    //AudioFormat format;
-    //(44100, 32, 1, true, false);
-    //AudioFormat.Encoding.PCM_SIGNED,44100,32,1,2,8000,false);
     ConcurrentLinkedQueue<byte[]> outFromMicro = new ConcurrentLinkedQueue<>();//выходной сигнал с микрофона
     ConcurrentLinkedQueue<double[]> fftValues = new ConcurrentLinkedQueue<>();//значения после преобразования фурье
- //   ConcurrentLinkedQueue<AudioInputStream> ais = new ConcurrentLinkedQueue<>();//аудиопотоки полученые из сигнала микрофона
     ConcurrentLinkedQueue<short[]> sampleInt = new ConcurrentLinkedQueue<>();//значения семплов
-    ConcurrentLinkedQueue<Double> freqs = new ConcurrentLinkedQueue<>();//частоты
     ConcurrentLinkedQueue<Double> equalizedFreqs = new ConcurrentLinkedQueue<>();//сглаженые частоты
 
     private Analizer analizer;
     private FFTProcesser fftProcesser;
-    private ConcurrentLinkedQueue<Double> koords;
+//    private ArrayList<Double> koords;
     private SampleMaker sampleMaker;
-    public Processer(ConcurrentLinkedQueue<Double> koords, File fos) {
+    private File file;
+    public Processer(File fos) {
 
-        this.koords=koords;
-        freqs=koords;
         int sampleRate = 44100;//format.getSampleRate();
         int sampleSize =32/8;
-        sampleMaker=new SampleMaker(sampleInt,fos);
-        analizer = new Analizer(fftValues, freqs);
+        this.file=fos;
+        sampleMaker=new SampleMaker(sampleInt,file);
+        analizer = new Analizer(fftValues);
         fftProcesser = new FFTProcesser(sampleInt, fftValues);
+    }
+
+    public Thread getAnalizerThread(){
+
+        return analizer.getThread();
+    }
+    public ArrayList<Double> getFreqs(){
+        return analizer.getFreqs();
+
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+        sampleMaker.setFile(file);
     }
 
     public void start() {
@@ -52,7 +61,7 @@ public class Processer {
 
     public void stop(){
         try {
-            fftProcesser.stop();
+            //fftProcesser.stop();
             analizer.stop();
         }catch (Exception e){
             e.printStackTrace();

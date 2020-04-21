@@ -36,6 +36,12 @@ public class FFTProcesser implements Runnable {
 
                 try {
                     short[] samplesArr = samples.poll();
+                    if(samplesArr.length==666){
+                        fftvalues.add(new double[666]);
+                        thread=null;
+                        continue;
+                    }
+
                     Complex[] samplesComplex = new Complex[1024];
                     for (int i = 0; i < 1024; i++) {
                         samplesComplex[i] = new Complex((double) samplesArr[i], 0.0);

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class NoteRecognizer {
-    ConcurrentLinkedQueue<Double> freqs;
+    ArrayList<Double> freqs;
     Thread thread;
     int l=20; //size of "window"
     int err=30; //error from noise
@@ -13,12 +13,12 @@ public class NoteRecognizer {
 
     double etalon;
 
-    public NoteRecognizer(ConcurrentLinkedQueue<Double> freqs,double etalon) {
+    public NoteRecognizer(ArrayList<Double> freqs,double etalon) {
         this.freqs = freqs;
         this.etalon=etalon;
-        int i=0;
-       while (!freqs.isEmpty()){
-           arr[i]=freqs.poll();
+        arr=new double[freqs.size()];
+       for(int i=0;i<freqs.size();i++){
+           arr[i]=freqs.get(i);
        }
 
     }

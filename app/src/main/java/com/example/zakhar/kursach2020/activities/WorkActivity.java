@@ -1,6 +1,7 @@
 package com.example.zakhar.kursach2020.activities;
 
 import com.example.zakhar.kursach2020.*;
+import com.example.zakhar.kursach2020.classes.NoteRecognizer;
 import com.example.zakhar.kursach2020.classes.Processer;
 
 import android.Manifest;
@@ -13,40 +14,35 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ArrayList;
 
 public class WorkActivity extends AppCompatActivity {
-    ConcurrentLinkedQueue<Double> koords = new ConcurrentLinkedQueue<>();
+    ArrayList<Double> freqs;
     Processer processer;
     ConstraintLayout llMain;
+    NoteRecognizer noteRecognizer;
     ImageView imageView;
     int high;
     int bottom;
     private MediaRecorder mediaRecorder;
     private File audioFile;
     private Double etalon = null;
+    private Button stop;
+    private Button start;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
+        stop = findViewById(R.id.stop);
+        start = findViewById(R.id.start);
         audioFile = new File(Environment.getExternalStorageDirectory(),
                 "audio_test4.3gp");
-        try {
-            if (audioFile.exists()) {
-                audioFile.delete();
-            }
-            audioFile.createNewFile();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         llMain = (ConstraintLayout) findViewById(R.id.LLMain);
         imageView = (ImageView) findViewById(R.id.imageView);
         high = llMain.getMaxHeight();
@@ -61,7 +57,7 @@ public class WorkActivity extends AppCompatActivity {
             }
             if (permissionStatus == PackageManager.PERMISSION_GRANTED && permissionStatus2 == PackageManager.PERMISSION_GRANTED) {
 
-                processer = new Processer(koords, audioFile);
+                processer = new Processer(audioFile);
             }
 
         }
@@ -69,53 +65,125 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     public void onStartClick(View view) {
-        if (mediaRecorder == null) {
-            if (etalon == null) {
-                mediaRecorder.setMaxDuration(2500);
-                onSopClick(view);
-                getEtalon(koords);
+
+        try {
+            if (audioFile.exists()) {
+                audioFile.delete();
             }
-            mediaRecorder = new MediaRecorder();
-            resetRecorder();
-            mediaRecorder.start();
+            audioFile.createNewFile();
+            processer.setFile(audioFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //start.setBackgroundColor(Color.YELLOW);
+        // start.setClickable(false);
+        //stop.setClickable(true);
+
+
+        if (etalon == null) {
+            etalon = getEtalon();
+
+        } else {
+
+                mediaRecorder = new MediaRecorder();
+                resetRecorder();
+                mediaRecorder.start();
         }
 
     }
 
     public void onSopClick(View view) {
-        if (mediaRecorder != null) {
-            mediaRecorder.stop();
+        // start.setClickable(true);
+        //stop.setClickable(false);
 
-            if (audioFile.canRead()) {
-                processer.start();
-            } else {
-                System.err.println("problem with file " + audioFile.getAbsolutePath());
+        if (mediaRecorder != null) {
+            try {
+                mediaRecorder.stop();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+                processer.setFile(audioFile);
+                processer.start();
+
+            try {
+                processer.getAnalizerThread().join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            freqs = processer.getFreqs();
+
+
+            if (etalon != null) {
+                noteRecognizer = new NoteRecognizer(freqs, etalon);
+                System.err.println(noteRecognizer.recognizeNotes());
+            }
+
         }
+
     }
 
-    private double getEtalon(ConcurrentLinkedQueue<Double> queue) {
-        int j = 0;
-        double[] arr = new double[queue.size()];
-        while (!queue.isEmpty()) {
-            arr[j] = queue.poll();
-            j++;
+    private double getEtalon() {
+        //audioFile = new File(Environment.getExternalStorageDirectory(),
+          //      "audio_test4.3gp");
+//        try {
+//            if (audioFile.exists()) {
+//                audioFile.delete();
+//            }
+//            audioFile.createNewFile();
+//            processer.setFile(audioFile);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }//создали файл и привязали к немо обработчик
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setMaxDuration(2500);
+        resetRecorder();//создали рекодер
+
+        mediaRecorder.start();
+        try {
+            Thread.sleep(2600);
+        } catch (Exception e) {
+            e.printStackTrace(); //запустили и ждем
         }
+
+        try {
+            mediaRecorder.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (audioFile.canRead()) {//запскаем обработку
+            processer.start();
+        } else {
+            System.err.println("problem with file " + audioFile.getAbsolutePath());
+        }
+
+        try {
+            processer.getAnalizerThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Double> freqs = processer.getFreqs();//получили лист с частотами
+
 
         double sum = 0;
-        for (int i = 0; i < arr.length; i++) {
-            sum += arr[i];
+        for (int i = 0; i < freqs.size(); i++) {
+            sum += freqs.get(i);
         }
-        return sum / arr.length;
-    }
+        double etalon = sum / freqs.size();//получили эталон
+        System.err.println("*************************etalon is " + etalon);
 
+        return etalon;
+
+    }
 
     private void resetRecorder() {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setAudioEncodingBitRate(16);
-        mediaRecorder.setAudioSamplingRate(44100);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+     //   mediaRecorder.setAudioEncodingBitRate(16);
+        //mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(audioFile.getAbsolutePath());
 
         try {
@@ -128,3 +196,4 @@ public class WorkActivity extends AppCompatActivity {
     }
 
 }
+

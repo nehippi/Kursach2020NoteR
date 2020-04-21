@@ -1,20 +1,18 @@
-//import java.util.ConcurrentLinkedQueue;
 package com.example.zakhar.kursach2020.classes;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Analizer implements Runnable {
     public ConcurrentLinkedQueue<double[]> fftValues;
 
-    ConcurrentLinkedQueue<Double> freqs;
+    private ArrayList<Double> freqs=new ArrayList<>();
     private Thread thread;
-
-    public Analizer(ConcurrentLinkedQueue<double[]> fftValues, ConcurrentLinkedQueue<Double> freqs) {
+    public Analizer(ConcurrentLinkedQueue<double[]> fftValues) {
         this.fftValues = fftValues;
-        this.freqs = freqs;
     }
 
     public void start() {
@@ -33,13 +31,13 @@ public class Analizer implements Runnable {
 
     public void run() {
         try {
-         //   File file = new File("bytes1.txt");
-            //FileWriter fileWriter = new FileWriter(file, true);
-
-
-            while (thread != null) {
+            while (thread!=null) {
                 while (!fftValues.isEmpty()) {
-
+                    if(fftValues.peek().length==666){
+                        thread=null;
+                        fftValues.poll();
+                        continue;
+                    }
                     //analize start
                     double max = 0;
                     double[] fftValue = fftValues.poll();
@@ -56,24 +54,19 @@ public class Analizer implements Runnable {
                             freq = i * 44100 / 1024;//возможно надо i+1 но это не точно
                             if (freq > 20 && freq < 2000) {
                                 freqs.add(new Double(freq));
-                               /// fileWriter.write("" + freq + '\n');
-
-                              //  fileWriter.flush();
                             }
                         }
                     }
-                    //analize end
-
-
                 }
-
             }
-          //  fileWriter.close();
 
         } catch (Exception e) {
         }
     }
 
+    public Thread getThread() {
+        return thread;
+    }
 
     int[] getRangeOfBigestColumn(double[] arr, int window) {
         int[] range = {0, 0};
@@ -98,5 +91,8 @@ public class Analizer implements Runnable {
         return sum / array.length;
     }
 
+    public ArrayList<Double> getFreqs() {
 
+        return freqs;
+    }
 }
