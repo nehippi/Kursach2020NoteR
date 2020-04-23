@@ -372,12 +372,16 @@ public class WorkActivity extends AppCompatActivity {
                 byte[] toSendAudio = getAudioBytes(audioName);
                 byte[] toSendEtalon=getAudioBytes(etalonName);
                 DataOutputStream dos = new DataOutputStream(os);
+
                 System.out.println(toSendAudio.length);
                 System.out.println(toSendEtalon.length);
+
                 dos.writeInt(toSendAudio.length);
                 dos.write(toSendAudio);
-                dos.write(toSendEtalon.length);
+
+                dos.writeInt(toSendEtalon.length);
                 dos.write(toSendEtalon);
+
                 dos.flush();
                 dos.close();
 
