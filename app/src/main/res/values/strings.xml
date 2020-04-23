@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Kursach2020</string>
+    <string name="timer_1">1</string>
+    <string name="timer_2">2</string>
+    <string name="timer_3">3</string>
+    <string name="timer_0">0</string>
 </resources>

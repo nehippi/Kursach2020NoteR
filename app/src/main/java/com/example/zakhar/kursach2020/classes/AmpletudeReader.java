@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
-public class AmpletudeReader extends Thread {
+public class AmpletudeReader {
         public ArrayList<byte[]> AudioData;
         public static AudioRecord audioRecord;
         public boolean recordFlag=false;
@@ -36,29 +36,29 @@ public class AmpletudeReader extends Thread {
             return m;
         }
 
-        @Override
-        public void run() {
+
+        public void start() {
 
 
             while (!recordFlag) {
                 info=audioRecord.getState();
                 byte[] curr = new byte[bufflen];
-               // int currread = audioRecord.read(curr, 0, bufflen);
+                int currread = audioRecord.read(curr, 0, bufflen);
 
-                //System.err.println("current amplitude is:" + getMax(curr, currread));
-                AudioData.add(curr);
-                if (audioRecord.read(curr, 0, bufflen) == 0) break;
+                System.err.println("current amplitude is:" + getMax(curr, currread));
+              //  AudioData.add(curr);
+              //  if (audioRecord.read(curr, 0, bufflen) == 0) break;
               //  if( getMax(curr, currread)>1000){
                //     recordFlag=true;
                 //}
             }
 
         }
-        @Override
-        public void interrupt(){
+
+        public void stop(){
 
             audioRecord.stop();
-            // audioRecord.release();
+            //audioRecord.release();
 
             info=audioRecord.getState();
 
