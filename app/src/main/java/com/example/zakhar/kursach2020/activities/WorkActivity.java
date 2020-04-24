@@ -3,12 +3,13 @@ package com.example.zakhar.kursach2020.activities;
 import com.example.zakhar.kursach2020.*;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
+//import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,16 +24,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class WorkActivity extends AppCompatActivity {
@@ -107,7 +111,7 @@ public class WorkActivity extends AppCompatActivity {
         ipString = editIp.getText().toString();
 
         if (ipString != "") {
-            sender=new Sender();
+            sender = new Sender();
             System.out.println("on send click");
             sender.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -142,10 +146,22 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     public void onStopClick(View view) {
-        hideRecordong();
-       mediaRecorder.stop();
-        isRecording = false;
-        imageButton.setVisibility(View.VISIBLE);
+        try {
+            if (sender.getStatus() == AsyncTask.Status.RUNNING) {
+                sender.cancel(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+
+            hideRecordong();
+            mediaRecorder.stop();
+            isRecording = false;
+            imageButton.setVisibility(View.VISIBLE);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -366,11 +382,11 @@ public class WorkActivity extends AppCompatActivity {
         }
 
 
-        @RequiresApi(api = Build.VERSION_CODES.O)
+        //@RequiresApi(api = Build.VERSION_CODES.O)
         private void writeAudio(String audioName, String etalonName) {
             try {
                 byte[] toSendAudio = getAudioBytes(audioName);
-                byte[] toSendEtalon=getAudioBytes(etalonName);
+                byte[] toSendEtalon = getAudioBytes(etalonName);
                 DataOutputStream dos = new DataOutputStream(os);
 
                 System.out.println(toSendAudio.length);
@@ -392,22 +408,25 @@ public class WorkActivity extends AppCompatActivity {
             }
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        private void reciveFromSocket(InputStream is) {
-            try {
-                int answ;
-                while ((answ = is.read()) != 666) {
-                    answ = 0;
-                }
 
-                System.out.println("writing audio is complited");
+
+        //@RequiresApi(api = Build.VERSION_CODES.O)
+        private int recivePortFromSocket(InputStream is) {
+            DataInputStream dos = new DataInputStream(is);
+            try {
+
+                int answ;
+                answ = dos.readInt();
+                return answ;
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return 0;
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.O)
+        //@RequiresApi(api = Build.VERSION_CODES.O)
+        @TargetApi(Build.VERSION_CODES.O)
         private byte[] getAudioBytes(String fileName) {
             File audioFileEt = new File(Environment.getExternalStorageDirectory(),
                     fileName);
@@ -421,6 +440,16 @@ public class WorkActivity extends AppCompatActivity {
 
         }
 
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            try {
+                socket.close();
+                System.out.println("Canceled!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -430,8 +459,12 @@ public class WorkActivity extends AppCompatActivity {
 
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.O)
+
+
+
+        //   @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
+
         protected Void doInBackground(Void... voids) {
             try {
                 System.out.println("do in back sender");
@@ -441,13 +474,23 @@ public class WorkActivity extends AppCompatActivity {
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
                 System.out.println("Connected!");
-                writeAudio(audioName,etalonName);
+                int newPort = recivePortFromSocket(is);
+                socket.close();
+                socket=null;
+                socket = new Socket(ipString, newPort);
+                socket.setKeepAlive(true);
+                is = socket.getInputStream();
+                os = socket.getOutputStream();
+                System.out.println("Connected to port " + newPort);
+                writeAudio(audioName, etalonName);
+                socket=null;
                 //writeAudio(etalonName);
-              //  while (!socket.isInputShutdown()) {
+                //  while (!socket.isInputShutdown()) {
 
-              //  }
+                //  }
                 System.out.println("bytes writed");
             } catch (Exception x) {
+                System.out.println("NO SERVER!");
                 x.printStackTrace();
             }
 
