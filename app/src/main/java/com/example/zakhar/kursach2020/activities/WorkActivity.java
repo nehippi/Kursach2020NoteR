@@ -31,12 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class WorkActivity extends AppCompatActivity {
@@ -51,7 +47,7 @@ public class WorkActivity extends AppCompatActivity {
     OutputStream os;
     Socket socket;
     String ip = "37.212.16.31";
-    String port = "8080";
+    String port = "8070";
     ImageButton imageButton;
     EditText editIp;
     int high;
@@ -162,6 +158,9 @@ public class WorkActivity extends AppCompatActivity {
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
+        start.setClickable(true);
+        stop.setClickable(false);
+
 
     }
 
@@ -170,8 +169,10 @@ public class WorkActivity extends AppCompatActivity {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.UNPROCESSED);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        //mediaRecorder.setAudioEncodingBitRate(16);
-        //mediaRecorder.setAudioSamplingRate(44100);
+        mediaRecorder.setAudioChannels(1);
+
+        mediaRecorder.setAudioEncodingBitRate(32);
+        mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(file.getAbsolutePath());
 
         try {
@@ -253,6 +254,9 @@ public class WorkActivity extends AppCompatActivity {
                 mediaRecorder = null;
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                stop.setClickable(true);
+                start.setClickable(true);
             }
 
             stop.setClickable(true);
@@ -371,6 +375,7 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     private class Sender extends AsyncTask<Void, Void, Void> {
+        int myNumber=666;
         @Override
         protected void onPreExecute() {
             System.out.println("on pe sender");
@@ -399,7 +404,7 @@ public class WorkActivity extends AppCompatActivity {
                 dos.write(toSendEtalon);
 
                 dos.flush();
-                dos.close();
+                //dos.close();
 
                 System.out.println("writing audio is complited");
 
@@ -411,7 +416,7 @@ public class WorkActivity extends AppCompatActivity {
 
 
         //@RequiresApi(api = Build.VERSION_CODES.O)
-        private int recivePortFromSocket(InputStream is) {
+        private int reciveIntFromSocket(InputStream is) {
             DataInputStream dos = new DataInputStream(is);
             try {
 
@@ -455,6 +460,7 @@ public class WorkActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             System.out.println("on post sender");
             super.onPostExecute(aVoid);
+            editIp.setText(""+myNumber);
             progressBar2.setVisibility(View.INVISIBLE);
 
         }
@@ -474,7 +480,7 @@ public class WorkActivity extends AppCompatActivity {
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
                 System.out.println("Connected!");
-                int newPort = recivePortFromSocket(is);
+                int newPort = reciveIntFromSocket(is);
                 socket.close();
                 socket=null;
                 socket = new Socket(ipString, newPort);
@@ -483,6 +489,8 @@ public class WorkActivity extends AppCompatActivity {
                 os = socket.getOutputStream();
                 System.out.println("Connected to port " + newPort);
                 writeAudio(audioName, etalonName);
+                myNumber=reciveIntFromSocket(is);
+                System.out.println(myNumber);
                 socket=null;
                 //writeAudio(etalonName);
                 //  while (!socket.isInputShutdown()) {
@@ -493,7 +501,6 @@ public class WorkActivity extends AppCompatActivity {
                 System.out.println("NO SERVER!");
                 x.printStackTrace();
             }
-
             return null;
         }
     }
