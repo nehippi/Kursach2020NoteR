@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.GuitarActivity">
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="700dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginBottom="107dp"
+        android:rotation="90"
+        android:onClick="onPreviousClick"
+        android:background="@color/colorPrimary"
+        android:text="PREVIOUS"
+        app:layout_constraintBottom_toTopOf="@+id/fingerboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="216dp"
+        android:layout_height="740dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="216dp"
+        android:rotation="90"
+        android:scaleX="3.39"
+        android:scaleY="3.39"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.555"
+        app:srcCompat="@drawable/fingerboard" />
+
+    <Button
+        android:id="@+id/button"
+        android:background="@color/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="107dp"
+        android:layout_marginBottom="107dp"
+        android:rotation="90"
+        android:text="NEXT"
+        android:onClick="onNextClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/button4" />
+
+    <TableLayout
+        android:id="@+id/fingerboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/E1"
+                android:layout_width="31dp"
+                android:layout_height="27.5dp"
+                android:translationY="-10dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/A1c"
+                android:layout_width="31dp"
+                android:layout_height="27.5dp"
+                android:translationY="-10dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/D2c"
+                android:layout_width="31dp"
+                android:layout_height="27.5dp"
+                android:translationY="-10dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/G2c"
+                android:layout_width="35dp"
+                android:layout_height="27.5dp"
+                android:translationY="-10dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/B2"
+                android:layout_width="31dp"
+                android:layout_height="27.5dp"
+                android:translationY="-10dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/E3"
+                android:layout_width="31dp"
+                android:layout_height="27.5dp"
+                android:translationY="-10dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/F1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/AS1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/DS2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/GS2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/C3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/F3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/FS1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/B1c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/E2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/A2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/CS3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/FS3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/G1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/C2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/F2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/AS2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/D3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/G3ccc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/GS1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/CS2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/FS2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/B2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/DS3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/GS3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/A1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/D2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/G2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/C3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/E3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/A3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/AS1c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/DS2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/GS2cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/CS3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/F3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/AS3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/B1"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/E2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/A2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/D3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/FS3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/B3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/C2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/F2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/AS2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/DS3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/G3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/C4"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/CS2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/FS2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/B2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/E3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/GS3cc"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/CS4"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/D2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/G2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/C3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/F3c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/A3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/D4"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/DS2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/GS2c"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/CS3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/FS3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/AS3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/DS4"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/E2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/A2"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/D3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/G3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/B3"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+
+            <ImageView
+                android:id="@+id/E4"
+                android:layout_width="31dp"
+                android:layout_height="57.5dp"
+                app:srcCompat="@drawable/ring1" />
+        </TableRow>
+    </TableLayout>
+</android.support.constraint.ConstraintLayout>

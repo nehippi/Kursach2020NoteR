@@ -4,6 +4,7 @@ import com.example.zakhar.kursach2020.*;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
@@ -30,10 +31,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class WorkActivity extends AppCompatActivity {
@@ -63,9 +67,15 @@ public class WorkActivity extends AppCompatActivity {
     private boolean isFirstTime = true;
     MyTimer myTimer;
     String ipString;
+    List<Integer> recognizedNotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
         editIp = findViewById(R.id.ipEdit);
@@ -161,8 +171,19 @@ public class WorkActivity extends AppCompatActivity {
         }
         start.setClickable(true);
         stop.setClickable(false);
+    }
 
-
+    public void onHTPClick(View view) {
+        Intent intent = new Intent(this, ChooseInstrumentActivity.class);
+        if (recognizedNotes == null || recognizedNotes.size() == 0) {
+            int[] arr = {0,1,2,3};
+            intent.putExtra("notes", arr);
+            startActivity(intent);
+        } else {
+            int[] arr = recognizedNotes.stream().mapToInt(i -> i).toArray();;
+            intent.putExtra("notes", arr);
+            startActivity(intent);
+        }
     }
 
 
@@ -255,7 +276,7 @@ public class WorkActivity extends AppCompatActivity {
                 mediaRecorder = null;
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 stop.setClickable(true);
                 start.setClickable(true);
             }
@@ -376,7 +397,8 @@ public class WorkActivity extends AppCompatActivity {
     }
 
     private class Sender extends AsyncTask<Void, Void, Void> {
-        int myNumber=666;
+        int myNumber = 666;
+
         @Override
         protected void onPreExecute() {
             System.out.println("on pe sender");
@@ -415,7 +437,6 @@ public class WorkActivity extends AppCompatActivity {
         }
 
 
-
         //@RequiresApi(api = Build.VERSION_CODES.O)
         private int reciveIntFromSocket(InputStream is) {
             DataInputStream dos = new DataInputStream(is);
@@ -429,6 +450,17 @@ public class WorkActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return 0;
+        }
+
+        private List<Integer> reciveIntArrayFromSocket(InputStream is) throws IOException {
+            ObjectInputStream os = new ObjectInputStream(is);
+            try {
+                List<Integer> answ = (ArrayList<Integer>) os.readObject();
+                return answ;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         //@RequiresApi(api = Build.VERSION_CODES.O)
@@ -461,17 +493,14 @@ public class WorkActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             System.out.println("on post sender");
             super.onPostExecute(aVoid);
-            editIp.setText(""+myNumber);
+            editIp.setText("" + myNumber);
             progressBar2.setVisibility(View.INVISIBLE);
 
         }
 
 
-
-
         //   @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
-
         protected Void doInBackground(Void... voids) {
             try {
                 System.out.println("do in back sender");
@@ -483,16 +512,17 @@ public class WorkActivity extends AppCompatActivity {
                 System.out.println("Connected!");
                 int newPort = reciveIntFromSocket(is);
                 socket.close();
-                socket=null;
+                socket = null;
                 socket = new Socket(ipString, newPort);
                 socket.setKeepAlive(true);
                 is = socket.getInputStream();
                 os = socket.getOutputStream();
                 System.out.println("Connected to port " + newPort);
                 writeAudio(audioName, etalonName);
-                myNumber=reciveIntFromSocket(is);
+                myNumber = reciveIntFromSocket(is);
+                recognizedNotes = reciveIntArrayFromSocket(is);
                 System.out.println(myNumber);
-                socket=null;
+                socket = null;
                 //writeAudio(etalonName);
                 //  while (!socket.isInputShutdown()) {
 
